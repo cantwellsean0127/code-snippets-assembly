@@ -1,7 +1,9 @@
 section .data
     
     ;; The integer that is to be printed
-    integer_to_print dq 1456
+    integer_to_print dq -1456
+
+    negative_sign db "-"
 
     ;; This variable is used by the write system call when we are printing each digit.
     digit_to_print db 0
@@ -16,17 +18,29 @@ main:
     mov rbp, rsp
 
 print_integer:
-    
-    ;; First, we move the integer we want to print into the r8 register. By accessing the integer through r8, we can modify the value without modifying the original value. The r9 register will contain the reversed version of the integer. The r10 register will contain the digit we are currently working with.
+
+    ;; Next, we move the integer we want to print into the r8 register. By accessing the integer through r8, we can modify the value without modifying the original value. The r9 register will contain the reversed version of the integer. The r10 register will contain the digit we are currently working with. The r11 register will be used to determine whether the original integer was negative or not.
     mov r8, qword [integer_to_print]
     mov r9, 0
     mov r10, 0
+    mov r11, 0
+    
+check_if_negative:  
+
+    cmp r8, 0
+    jge reverse_integer
+    mov r11, 1
+    mov rdx, 0
+    mov rax, r8
+    mov rbx, -1
+    mul rbx
+    mov r8, rax
 
 reverse_integer:
     
     ;; If the integer to reverse is greater than 0, therefore having more digits, we move on to grabbing the right-most digit. If there are no more digits to grab, we move on to printing the reversed integer.
     cmp r8, 0
-    jbe print_reversed_integer
+    je print_negative_sign
 
 grab_right_most_digit:
     
@@ -47,6 +61,16 @@ grab_right_most_digit:
     
     ;; Now that we're done with the current digit, we can restart the loop.
     jmp reverse_integer
+
+print_negative_sign:
+
+    cmp r11, 1
+    jne print_reversed_integer
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, negative_sign
+    mov rdx, 1
+    syscall
 
 print_reversed_integer:
 
