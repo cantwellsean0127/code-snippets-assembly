@@ -95,7 +95,7 @@ print_digits:
     cmp rdx, 0
     jne print_digits
 
-;; This is where we restore the original values for the registers that were changed, specifically, the rax, rcx, rdx, and rsi registers.
+;; This is where we restore the original values for the registers that were changed, specifically, the rax, rcx, rdx, rsi, and r10 registers.
 restore_registers:
     pop r10
     pop rsi
