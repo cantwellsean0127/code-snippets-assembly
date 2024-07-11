@@ -13,11 +13,12 @@ print_integer:
     ;; 4. Pop each digit off the stack and print it. This will print the left-most digit and then move towards the right-most digit.
     ;; 5. Pop the preserved values from the stack back into their respective registers.
     
-    ;; During the function, the rax, rcx, rdx, and rsi register values are modified. In case the user is has important data stored there, we will preserve their values via the stack. 
+    ;; During the function, the rax, rcx, rdx, rsi, and r10 register values are modified. In case the user is has important data stored there, we will preserve their values via the stack. 
     push rax
     push rcx
     push rdx
     push rsi
+    push r10
 
     ;; Since we're using rdx to store the amount of digits, we should initialize it to zero
     xor rdx, rdx
@@ -96,6 +97,7 @@ print_digits:
 
 ;; This is where we restore the original values for the registers that were changed, specifically, the rax, rcx, rdx, and rsi registers.
 restore_registers:
+    pop r10
     pop rsi
     pop rdx
     pop rcx
